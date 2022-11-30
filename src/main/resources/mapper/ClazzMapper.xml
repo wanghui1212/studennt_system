@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper命名空间：作用就是对sql进行分类化管理-->
+<!--namespace=mapper接口地址-->
+<mapper namespace="com.hui.mapper.ClazzMapper">
+
+    <!-- 配置 查询结果的列名和实体类的属性名的对应关系 -->
+    <resultMap type="com.hui.entity.Clazz" id="Clazz">
+        <!-- 主键字段的对应 -->
+        <id column="id" property="id"/>
+        <!--非主键字段的对应-->
+        <result column="clazz_name" property="clazzName"/>
+        <result column="id" property="id"/>
+        <result column="remark" property="remark"/>
+        <result column="subject_id" property="subjectId"/>
+    </resultMap>
+
+    <insert id="create" keyProperty="id" useGeneratedKeys="true" parameterType="com.hui.entity.Clazz">
+		insert into tb_clazz(
+			clazz_name,
+			remark,
+			subject_id
+		)values(
+			#{clazzName},
+			#{remark},
+			#{subjectId}
+		)
+	</insert>
+
+    <select id="query" resultMap="Clazz">
+        select * from tb_clazz
+        <include refid="ClazzFindCriteria"/>
+        <if test="offset!=null and rows!=null">limit ${offset} , ${rows}</if>
+    </select>
+
+
+
+    <select id="count" resultType="int">
+        select count(1) from tb_clazz
+        <include refid="ClazzFindCriteria"/>
+    </select>
+
+    <select id="detail" resultMap="Clazz">
+        select * from tb_clazz
+        <include refid="ClazzFindCriteria"/>
+        limit 1
+    </select>
+
+    <delete id="delete">
+        delete from tb_clazz
+        <include refid="ClazzFindCriteria"/>
+    </delete>
+
+    <update id="update">
+        update tb_clazz
+        <include refid="ClazzUpdateCriteria"/>
+        <include refid="ClazzFindCriteria"/>
+    </update>
+
+
+    <sql id="ClazzFindCriteria">
+        <where>
+            <if test="clazzName != null and clazzName != '' ">and clazz_name like concat('%',#{clazzName},'%')</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="remark != null and remark != ''">and remark = #{remark}</if>
+            <if test="subjectId != null">and subject_id = #{subjectId}</if>
+        </where>
+    </sql>
+
+    <sql id="ClazzUpdateCriteria">
+        <set>
+            <if test="updateClazzName != null and updateClazzName != '' ">clazz_name = #{updateClazzName},</if>
+            <if test="updateId != null">id = #{updateId},</if>
+            <if test="updateRemark != null and updateRemark != ''">remark = #{updateRemark},</if>
+            <if test="updateSubjectId != null">subject_id = #{updateSubjectId},</if>
+        </set>
+    </sql>
+</mapper>
